@@ -6,6 +6,7 @@
 #include "Camera.h"
 
 
+class COpenAssetImportMesh;
 
 class CAudio
 {

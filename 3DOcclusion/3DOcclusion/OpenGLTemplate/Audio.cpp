@@ -1,5 +1,7 @@
 #include "Audio.h"
 
+#include "OpenAssetImportMesh.h"
+
 #pragma comment(lib, "lib/fmod_vc.lib")
 
 CAudio::CAudio()
@@ -27,7 +29,47 @@ bool CAudio::Initialise()
 	FmodErrorCheck(result);
 	if (result != FMOD_OK)
 		return false;
+	
+	// Place/draw the wall at the same location of the tomb wolf:
 
+	glm::vec3 wolf_position(0.0f, 0.0f, -50.0f);
+	
+	const auto wall_start_x = 2.0f;
+	const auto wall_end_x = -3.0f;
+	const auto wall_height = 300.0f;
+	const auto z = -10.00f;
+	
+	glm::vec3 v1(wall_start_x, 0.0f, z); // bottom left
+	glm::vec3 v2(wall_start_x, wall_height, z); // top left 
+	glm::vec3 v3(wall_end_x, wall_height, z); // bottom right
+	glm::vec3 v4(wall_end_x, 0.0f, z); //bottom left
+
+	FMOD::Geometry* geometry;
+	FMOD_VECTOR wall[4];
+	FMOD_VECTOR geometry_position;
+
+	// The position of the objects in the geometry will be relative to wolf's position, i think
+	ToFMODVector(wolf_position, &geometry_position);
+	
+	m_FmodSystem->createGeometry(1, 4, &geometry);
+
+	/* Add objects to this geometry group: 1 wall */
+
+	auto poly_index = 0;	
+
+	// set each 
+	ToFMODVector(v1, &wall[0]);
+	ToFMODVector(v2, &wall[1]);
+	ToFMODVector(v3, &wall[2]);
+	ToFMODVector(v4, &wall[3]);
+	
+	geometry->addPolygon(100.0f, 0.0f, FALSE, 4, wall, &poly_index);		
+	// Set the position of the geometry
+	geometry->setPosition(&geometry_position);
+	geometry->setActive(TRUE);
+
+	
+	
 	return true;
 	
 }
@@ -52,6 +94,7 @@ bool CAudio::PlayEventSound()
 		return false;
 	// play through 3D channel
 	m_eventChannel->setMode(FMOD_3D);
+	m_eventChannel->setVolume(100);
 	// set the position to be the horse's position
 	result = m_eventChannel->set3DAttributes(0, 0, 0);
 	FmodErrorCheck(result);
@@ -95,6 +138,7 @@ bool CAudio::PlayMusicStream()
 
 	// Set the volume lower
 	result = m_musicChannel->setVolume(m_musicVolume);
+
 	FmodErrorCheck(result);
 
 	if (result != FMOD_OK)

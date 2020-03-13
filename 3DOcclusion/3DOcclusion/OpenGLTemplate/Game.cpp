@@ -45,6 +45,7 @@ Game::Game()
 	m_pFtFont = NULL;
 	m_pBarrelMesh = NULL;
 	m_pHorseMesh = NULL;
+	m_pTombWolfMesh = NULL;
 	m_pSphere = NULL;
 	m_pHighResolutionTimer = NULL;
 	m_pAudio = NULL;
@@ -67,6 +68,7 @@ Game::~Game()
 	delete m_pHorseMesh;
 	delete m_pSphere;
 	delete m_pAudio;
+	delete m_pTombWolfMesh;
 
 	if (m_pShaderPrograms != NULL) {
 		for (unsigned int i = 0; i < m_pShaderPrograms->size(); i++)
@@ -93,6 +95,7 @@ void Game::Initialise()
 	m_pFtFont = new CFreeTypeFont;
 	m_pBarrelMesh = new COpenAssetImportMesh;
 	m_pHorseMesh = new COpenAssetImportMesh;
+	m_pTombWolfMesh = new COpenAssetImportMesh;
 	m_pSphere = new CSphere;
 	m_pAudio = new CAudio;
 
@@ -157,7 +160,11 @@ void Game::Initialise()
 	// Load some meshes in OBJ format
 	m_pBarrelMesh->Load("resources\\models\\Barrel\\Barrel02.obj");  // Downloaded from http://www.psionicgames.com/?page_id=24 on 24 Jan 2013
 	m_pHorseMesh->Load("resources\\models\\Horse\\Horse2.obj");  // Downloaded from http://opengameart.org/content/horse-lowpoly on 24 Jan 2013
+	m_pTombWolfMesh->Load("resources\\models\\TombWolf\\tombwolf.obj");  // Downloaded from https://opengameart.org/content/tombwoof on 13 Mar 2020
 
+	
+	
+	
 	// Create a sphere
 	m_pSphere->Create("resources\\textures\\", "dirtpile01.jpg", 25, 25);  // Texture downloaded from http://www.psionicgames.com/?page_id=26 on 24 Jan 2013
 	glEnable(GL_CULL_FACE);
@@ -166,7 +173,7 @@ void Game::Initialise()
 	m_pAudio->Initialise();
 	m_pAudio->LoadEventSound("Resources\\Audio\\Horse.wav");					// Royalty free sound from freesound.org
 	m_pAudio->LoadMusicStream("Resources\\Audio\\DST-Garote.mp3");	// Royalty free music from http://www.nosoapradio.us/
-	// m_pAudio->PlayMusicStream();
+	m_pAudio->PlayMusicStream();
 }
 
 // Render method runs repeatedly in a loop
@@ -248,8 +255,6 @@ void Game::Render()
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
 		m_pHorseMesh->Render();
 	modelViewMatrixStack.Pop();
-
-
 	
 	// Render the barrel 
 	modelViewMatrixStack.Push();
@@ -263,7 +268,7 @@ void Game::Render()
 
 	// Render the sphere
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(glm::vec3(0.0f, 2.0f, 150.0f));
+		modelViewMatrixStack.Translate(glm::vec3(25.0f, 2.0f, 150.0f));
 		modelViewMatrixStack.Scale(2.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -271,6 +276,17 @@ void Game::Render()
 		//pMainProgram->SetUniform("bUseTexture", false);
 		m_pSphere->Render();
 	modelViewMatrixStack.Pop();
+
+	// Render the TombWolf
+	modelViewMatrixStack.Push();
+	modelViewMatrixStack.Translate(glm::vec3(0.0f, 0.0f, -50.0f));
+	modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
+	modelViewMatrixStack.Scale(0.7f);
+	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
+	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
+	m_pTombWolfMesh->Render();
+	modelViewMatrixStack.Pop();
+
 		
 	// Draw the 2D graphics after the 3D graphics
 	DisplayFrameRate();
