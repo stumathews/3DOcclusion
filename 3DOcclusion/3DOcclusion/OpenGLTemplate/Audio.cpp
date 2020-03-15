@@ -24,7 +24,7 @@ bool CAudio::Initialise()
 	if (result != FMOD_OK) 
 		return false;
 
-	// Set 3D settings
+	// Set 3D settings - doppler effect, distance factor and rolloff scale
 	result = m_FmodSystem->set3DSettings(1.0f, 1.0f, 1.0f);
 	FmodErrorCheck(result);
 	if (result != FMOD_OK)
@@ -48,7 +48,7 @@ bool CAudio::Initialise()
 	FMOD_VECTOR wall[4];
 	FMOD_VECTOR geometry_position;
 
-	// The position of the objects in the geometry will be relative to wolf's position, i think
+	// The position of the objects in the geometry will be relative to wolf's position
 	ToFMODVector(wolf_position, &geometry_position);
 	
 	m_FmodSystem->createGeometry(1, 4, &geometry);
@@ -67,9 +67,6 @@ bool CAudio::Initialise()
 	// Set the position of the geometry
 	geometry->setPosition(&geometry_position);
 	geometry->setActive(TRUE);
-
-	
-	
 	return true;
 	
 }
@@ -229,6 +226,7 @@ void CAudio::DecreaseMusicVolume()
 	m_musicChannel->setVolume(m_musicVolume);
 }
 
+// implementation changing open gl vectors to fmod vectors
 void CAudio::ToFMODVector(glm::vec3 &glVec3, FMOD_VECTOR *fmodVec)
 {
 	fmodVec->x = glVec3.x;

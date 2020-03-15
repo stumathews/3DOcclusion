@@ -27,7 +27,7 @@ private:
 		
 
 	void FmodErrorCheck(FMOD_RESULT result);
-	void ToFMODVector(glm::vec3 &glVec3, FMOD_VECTOR *fmodVec);
+	void ToFMODVector(glm::vec3 &glVec3, FMOD_VECTOR *fmodVec); // turn opengl vectors into fmod ones
 
 
 	FMOD_RESULT result;

@@ -277,7 +277,7 @@ void Game::Render()
 		m_pSphere->Render();
 	modelViewMatrixStack.Pop();
 
-	// Render the TombWolf
+	// Render and position the TombWolf
 	modelViewMatrixStack.Push();
 	modelViewMatrixStack.Translate(glm::vec3(0.0f, 0.0f, -50.0f));
 	modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
@@ -302,6 +302,7 @@ void Game::Update()
 	// Update the camera using the amount of time that has elapsed to avoid framerate dependent motion
 	m_pCamera->Update(m_dt);
 
+	// Bring in the camera for obtaining position for sound based occlusion
 	m_pAudio->Update(m_pCamera);
 }
 
